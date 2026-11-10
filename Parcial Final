@@ -1,11 +1,3 @@
-# Parcial 3 - Logica de Programacion
-# Sistema de pedidos de una cafeteria universitaria
-# Integrantes del grupo:
-#   - Nombre Apellido 1
-#   - Nombre Apellido 2
-#   - Nombre Apellido 3
-
-
 def mostrar_productos(productos):
     """Recorre el diccionario y muestra codigo, nombre, precio y existencias."""
     print("\nCodigo  Producto            Precio    Existencias")
