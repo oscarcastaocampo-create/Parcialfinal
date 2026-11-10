@@ -1,0 +1,118 @@
+# Parcial 3 - Logica de Programacion
+# Sistema de pedidos de una cafeteria universitaria
+# Integrantes del grupo:
+#   - Nombre Apellido 1
+#   - Nombre Apellido 2
+#   - Nombre Apellido 3
+
+
+def mostrar_productos(productos):
+    """Recorre el diccionario y muestra codigo, nombre, precio y existencias."""
+    print("\nCodigo  Producto            Precio    Existencias")
+    print("-" * 52)
+    for codigo, datos in productos.items():
+        nombre, precio, existencias = datos  # desempaquetado de la tupla
+        print(f"{codigo:<8}{nombre:<20}{precio:<10}{existencias}")
+
+
+def registrar_producto(productos, pedido, codigo, cantidad):
+    """Valida y agrega un producto al pedido; actualiza las existencias."""
+    if codigo not in productos:
+        print("Producto no encontrado.")
+        return
+
+    if cantidad <= 0:
+        print("Cantidad no valida.")
+        return
+
+    nombre, precio, existencias = productos[codigo]
+
+    if cantidad > existencias:
+        print("No hay suficientes unidades disponibles.")
+        return
+
+    subtotal = precio * cantidad
+    pedido.append((codigo, nombre, cantidad, subtotal))
+
+    # Las tuplas son inmutables: se crea una nueva con las existencias actualizadas
+    productos[codigo] = (nombre, precio, existencias - cantidad)
+    print(f"Agregado: {cantidad} x {nombre} = ${subtotal}")
+
+
+def calcular_total(pedido):
+    """Suma los subtotales de todos los productos del pedido."""
+    total = 0
+    for item in pedido:
+        total += item[3]  # posicion 3 = subtotal
+    return total
+
+
+def leer_entero(mensaje):
+    """Lee un entero; si el usuario escribe otra cosa, retorna None."""
+    try:
+        return int(input(mensaje))
+    except ValueError:
+        return None
+
+
+def mostrar_resumen(pedido):
+    """Imprime el resumen del pedido con descuento si aplica."""
+    total = calcular_total(pedido)
+    if total >= 50000:
+        descuento = total * 0.10
+    else:
+        descuento = 0
+    total_final = total - descuento
+
+    print("\n========== RESUMEN DEL PEDIDO ==========")
+    print(f"{'Producto':<20}{'Cantidad':<12}{'Subtotal'}")
+    print("-" * 41)
+    for codigo, nombre, cantidad, subtotal in pedido:
+        print(f"{nombre:<20}{cantidad:<12}{subtotal}")
+    print("-" * 41)
+    print(f"Total : ${int(total)}")
+    print(f"Descuento : ${int(descuento)}")
+    print(f"TOTAL A PAGAR : ${int(total_final)}")
+    print("========================================")
+
+
+def main():
+    # Diccionario: clave = codigo, valor = tupla (nombre, precio, existencias)
+    productos = {
+        1: ("Cafe", 3000, 20),
+        2: ("Jugo natural", 5000, 15),
+        3: ("Sandwich", 8000, 10),
+        4: ("Empanada", 2500, 25),
+        5: ("Hamburguesa", 12000, 8),
+    }
+
+    # Lista de tuplas: (codigo, nombre, cantidad, subtotal)
+    pedido = []
+
+    opcion = 0
+    while opcion != 3:
+        print("\n========== CAFETERIA ==========")
+        print("1. Mostrar productos")
+        print("2. Agregar producto al pedido")
+        print("3. Finalizar pedido")
+        opcion = leer_entero("Seleccione una opcion: ")
+
+        if opcion == 1:
+            mostrar_productos(productos)
+        elif opcion == 2:
+            codigo = leer_entero("Codigo del producto: ")
+            cantidad = leer_entero("Cantidad: ")
+            if cantidad is None:
+                print("Cantidad no valida.")
+            else:
+                registrar_producto(productos, pedido, codigo, cantidad)
+        elif opcion == 3:
+            if len(pedido) == 0:
+                print("No se registraron productos en el pedido.")
+            else:
+                mostrar_resumen(pedido)
+        else:
+            print("Opcion no valida.")
+
+
+main()
